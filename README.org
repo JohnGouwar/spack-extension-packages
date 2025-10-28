@@ -1,0 +1,27 @@
+#+TITLE: A Spack repo for the packages I use in extensions
+#+AUTHOR: John Gouwar
+
+I have ended up writing a few Spack extensions that required external packages,
+so I have assembled them here to make them easier to distribute.
+
+* Adding this repo to your configuration
+
+#+begin_example
+spack repo add https://github.com/JohnGouwar/spack-extension-packages \
+  --path extensions 
+#+end_example
+
+* Patching sha256 values
+
+Spack wants to verify that the code that it is downloading is what the package
+developer intended to have downloaded, therefore each version must be tagged
+with a sha256 hash of its contents. Patching this is tedious since I often
+develop the packages actively, and thus I have provided the ~patch_sha.py~
+script to automate sha256 changes, and to produce tarballs of source code for
+multi-file packages.
+
+**You should run this script once after cloning the repo to ensure that code is
+tarballed appropriately**
+
+/Note:/ New packages must use the keyword argument ~sha256=~ in their versions
+to be patched effectively by the rudimentary regex that I'm using.
