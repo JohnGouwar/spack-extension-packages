@@ -28,7 +28,7 @@ def patch_sha_for_package(package_name: str, pt: PackageT):
         archive_file_path = package_path / pt.archive_file
         with tarfile.open(archive_file_path, "w:gz") as f:
             for ap in archive_paths:
-                f.add(ap)
+                f.add(ap, arcname=ap.name)
         with open(archive_file_path, "rb") as f:
             shasum = file_digest(f, "sha256").hexdigest()
     with open(package_py_path, "r") as f:
