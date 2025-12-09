@@ -73,27 +73,36 @@ int make_unique_fifo(int size, char** cmd_arr, char* fifo_path) {
 /**
    Send the message representing the compile task to the clustcc daemon
  */
-int send_task_msg(char* mode, int cmdlen, char **cmdarr, char * fifopath) {
+int send_task_msg(
+                  char* mode,
+                  char* cwd,
+                  char * fifopath,
+                  int cmdlen,
+                  char **cmdarr
+                  ) {
   // Make sure we can open the message queue before allocating the string 
   mqd_t mqd = mq_open(CLUSTCC_MQ, O_RDWR);
   if (mqd < 0) {
     return -1;
   }
-  // Create the message: MODE;FIFO_PATH;gcc;-o;output;...
-  size_t bufsize = sizeof(char) * 256;
+  // Create the message: MODE;CWD;FIFO_PATH;rest;of;command...
+  size_t initial_strlen = strlen(mode) + strlen(cwd) + strlen(fifopath) + 3; //3 separators 
+  size_t bufsize = sizeof(char) * initial_strlen + 10;
   char * strbuf = (char *) malloc(bufsize);
   char padding = PADDING_CHAR;
   strcat(strbuf, mode);
   strncat(strbuf, &padding, sizeof(char));
+  strcat(strbuf, cwd);
+  strncat(strbuf, &padding, sizeof(char));
   strcat(strbuf, fifopath);
   strncat(strbuf, &padding, sizeof(char));
-  size_t used_bytes = strlen(mode) + strlen(fifopath) + 2; // this should be much smaller than 256
+  size_t used_bytes = initial_strlen; 
   for (int i = 0; i < cmdlen; i++) {
     char *arg = cmdarr[i];
     size_t arglen = strlen(arg);
     used_bytes = used_bytes + arglen + 1; // add separator at the end 
     if (used_bytes >= bufsize) { // dynamic reallocation of the string
-      strbuf = (char *)reallocarray(strbuf, bufsize, sizeof(char));
+      strbuf = (char *)reallocarray(strbuf, bufsize * 2, sizeof(char));
     }
     strcat(strbuf, arg);
     strncat(strbuf, &padding, sizeof(char));
@@ -110,15 +119,16 @@ int send_task_msg(char* mode, int cmdlen, char **cmdarr, char * fifopath) {
 int main(int argc, char** argv) {
   char fifopath[32];
   char* mode = argv[1];
-  int cmdlen = argc - 2;
-  char** cmdarr = argv + 2;
+  char* cwd = argv[2];
+  int cmdlen = argc - 3;
+  char** cmdarr = argv + 3;
   // Setup return fifo
   if (make_unique_fifo(cmdlen, cmdarr, fifopath) < 0){
     perror("Error making return fifo");
     return 1;
   }
   // Submit the command to the clustcc MPI daemon
-  if (send_task_msg(mode, cmdlen, cmdarr, fifopath) < 0) {
+  if (send_task_msg(mode, cwd, fifopath, cmdlen, cmdarr) < 0) {
     perror("Error sending message");
     unlink(fifopath);
     return 1;
