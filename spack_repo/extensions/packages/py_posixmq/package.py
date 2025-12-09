@@ -11,7 +11,7 @@ class PyPosixmq(PythonPackage):
     url = f"file:///{pathlib.PurePath(__file__).parent}/pymq.tar.gz"
     version(
         "1.0",
-        sha256="df42d69c8dce2939981cff2d2f76e7c80a30fe307e8d19ef12357d27f564df3a",
+        sha256="4b6b6f306513cf0314451d959afd64f87c58f2d52571cb43c5da344bd5bc1638",
     )
     depends_on("py-setuptools", type="build")
     depends_on("c", type="build")

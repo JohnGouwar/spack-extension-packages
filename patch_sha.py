@@ -42,7 +42,7 @@ if __name__ == "__main__":
         "tracing_compiler_wrapper": SingleFile("cc.sh"),
         "mqsend": SingleFile("mqsend.c"),
         "clustcc_compiler_wrapper": SingleFile("cc.sh"),
-        "spack_clustcc_client": SingleFile("client.c"),
+        "clustcc_client": SingleFile("client.c"),
         "py_posixmq": Archive(["src"], "pymq.tar.gz"),
         "simple_c_package": SingleFile("simple.c")
     }

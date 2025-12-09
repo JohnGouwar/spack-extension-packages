@@ -2,29 +2,12 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-# ----------------------------------------------------------------------------
-# If you submit this package back to Spack as a pull request,
-# please first remove this boilerplate and all FIXME comments.
-#
-# This is a template package file for Spack.  We've put "FIXME"
-# next to all the things you'll want to change. Once you've handled
-# them, you can save this file and test your package like this:
-#
-#     spack install spack-distcc-client
-#
-# You can edit this file again by typing:
-#
-#     spack edit spack-distcc-client
-#
-# See the Spack documentation for more information on packaging.
-# ----------------------------------------------------------------------------
-
 import pathlib
 from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 
-class SpackClustccClient(Package):
+class ClustccClient(Package):
     """The client for masquerading clustcc calls"""
 
     # FIXME: Add a proper url for your package's homepage here.
@@ -35,7 +18,7 @@ class SpackClustccClient(Package):
 
     version(
         "1.0",
-        sha256="616ec98bf1c400c489ae073fb327b9e19b392aa3a50f485d016b92dcb4d9d849",
+        sha256="bca1d8ce476d1fdd24afce51ef50f7ff2f324d575f3bf26ef726aac124d0d382",
         expand=False
     )
     depends_on("c", type="build")

@@ -18,11 +18,11 @@ class ClustccCompilerWrapper(CompilerWrapper):
     # notify when the package is updated.
     if sys.platform != "win32":
         version(
-            "3.0",
-            sha256="04584ecc96b021a36deb2a776a13e553ce31ae86b8d686530673ce5ecfa21cfd",
+            "3.1415",
+            sha256="896e96555f4721a3916471dc520dad19041f37c09624164bb8be2e0a27d34d31",
             expand=False,
         )
         # Dependency actually needed for tracing
-        depends_on("spack-clustcc-client", type=("build", "link", "run"))
+        depends_on("clustcc-client", when="@3.1415", type=("build", "link", "run"))
 
 
