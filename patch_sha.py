@@ -43,7 +43,7 @@ if __name__ == "__main__":
         "mqsend": SingleFile("mqsend.c"),
         "clustcc_compiler_wrapper": SingleFile("cc.sh"),
         "clustcc_client": SingleFile("client.c"),
-        "py_posixmq": Archive(["src"], "pymq.tar.gz"),
+        "py_epic_ipc": Archive(["src"], "epic_ipc.tar.gz"),
         "simple_c_package": SingleFile("simple.c")
     }
     for name, pt in PACKAGES.items():

@@ -24,12 +24,12 @@ class BuildSharedLibrary(build_ext):
         )
 
 setup(
-    name="PosixMQ",
-    packages=["PosixMQ"],
+    name="epic-ipc",
+    packages=["epic"],
     ext_modules=[
         Extension(
-            "PosixMQ.PosixMQ",
-            sources=["PosixMQ/posixmq.c"],
+            "epic.ipc",
+            sources=["epic/ipc.c"],
             extra_link_args=["-lrt"]
         )
     ],

@@ -7,11 +7,11 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
-class PyPosixmq(PythonPackage):
-    url = f"file:///{pathlib.PurePath(__file__).parent}/pymq.tar.gz"
+class PyEpicIpc(PythonPackage):
+    url = f"file:///{pathlib.PurePath(__file__).parent}/epic_ipc.tar.gz"
     version(
         "1.0",
-        sha256="00f2788bcebb5f8521787662711513bc9ddf6c84e9b9a88ee96c5c2ed03f9537",
+        sha256="bfd18bfee221ce5ba115b1d78f193863b5f02771c302549048e5bbebfa187fda",
     )
     depends_on("py-setuptools", type="build")
     depends_on("c", type="build")

@@ -1,16 +1,21 @@
-from ctypes import CDLL, POINTER, c_char_p, c_int, c_size_t, c_uint, byref, create_string_buffer
+from ctypes import CDLL, POINTER, c_char, c_char_p, c_int, c_size_t, c_ubyte, c_uint, byref, c_void_p, cast, create_string_buffer, Structure, memmove
 from pathlib import Path
 
 
 this_dir = Path(__file__).parent
 for f in this_dir.iterdir():
     if f.is_file:
-        if f.name.startswith("PosixMQ") and f.name.endswith(".so"):
+        if f.name.startswith("ipc") and f.name.endswith(".so"):
             FFI = CDLL(str(f.absolute()))
             break
 else:
-    raise ImportError("Could not find PosixMQ shared object file")
-
+    raise ImportError("Could not find ipc.so shared object file")
+class c_shm_handle(Structure):
+    _fields_ = [
+        ("fd", c_int),
+        ("addr", c_void_p),
+        ("size", c_size_t)
+    ]
 posixmq_open_create = FFI.posixmq_open_create
 posixmq_open_create.argtypes = [c_char_p, c_size_t, c_size_t, POINTER(c_int)]
 posixmq_open_existing = FFI.posixmq_open_existing
@@ -23,7 +28,6 @@ posixmq_send = FFI.posixmq_send
 posixmq_send.argtypes = [c_int, c_char_p, c_size_t, c_uint]
 posixmq_recv = FFI.posixmq_recv
 posixmq_recv.argtypes = [c_int, c_char_p, POINTER(c_size_t), POINTER(c_uint)]
-
 class PosixMQ:
     def __init__(
             self,
@@ -95,3 +99,72 @@ class PosixMQ:
         if res != 0:
             print("recv failed")
         return buf_out.value[:size_inout.value].decode()
+
+
+posixshm_create = FFI.posixshm_create
+posixshm_create.argtypes = [c_char_p, c_size_t]
+posixshm_create.restype = POINTER(c_shm_handle)
+posixshm_open = FFI.posixshm_open
+posixshm_open.argtypes = [c_char_p, c_size_t]
+posixshm_open.restype = POINTER(c_shm_handle)
+posixshm_close = FFI.posixshm_close
+posixshm_close.argtypes = [POINTER(c_shm_handle)]
+posixshm_unlink = FFI.posixshm_unlink
+posixshm_unlink.argtypes = [c_char_p]
+
+class PosixShm:
+    def __init__(
+            self,
+            name: str,
+            handle_ptr: c_shm_handle
+    ):
+        self.name = name
+        self.handle_ptr = handle_ptr
+        self._buf = None
+        self._mv = None
+
+    @property
+    def fd(self):
+        return self.handle_ptr.contents.fd
+
+    @property
+    def addr(self):
+        return self.handle_ptr.contents.addr
+    
+    @property 
+    def size(self):
+        return self.handle_ptr.contents.size
+    
+    @classmethod
+    def create(cls, name: str, size: int) -> "PosixShm":
+        '''
+        Create a shared memory region with `name` and `size`
+        '''
+        handle_ptr = posixshm_create(name.encode(), size)
+        return cls(name, handle_ptr)
+    
+    @classmethod
+    def open(cls, name: str, size: int) -> "PosixShm":
+        handle_ptr = posixshm_open(name.encode(), size)
+        return cls(name, handle_ptr)
+
+    def unlink(self):
+        posixshm_unlink(self.name.encode())
+
+    def read(self) -> memoryview:
+        if self._mv is None:
+            buf_type = c_char * self.size
+            self._buf = buf_type.from_address(cast(self.addr, c_void_p).value)
+            self._mv = memoryview(self._buf)
+        return self._mv
+    
+    def write(self, new_data: bytes):
+        if len(new_data) > self.size:
+            raise ValueError(f"Data length {len(new_data)} exceeds shared memory size {self.size}")
+
+        memmove(self.addr, new_data, len(new_data))
+    
+            
+    def close(self):
+        posixshm_close(self.handle_ptr)
+
