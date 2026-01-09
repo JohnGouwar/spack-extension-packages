@@ -30,3 +30,6 @@ class ClustccClient(Package):
         cc("-lrt", "-o", str(client_out), str(client_src))
         mkdir(prefix.bin)
         install(str(client_out), prefix.bin.clustcc_client)
+
+
+
