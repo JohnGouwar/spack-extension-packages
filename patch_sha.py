@@ -39,10 +39,9 @@ def patch_sha_for_package(package_name: str, pt: PackageT):
 
 if __name__ == "__main__":
     PACKAGES = {
-        "tracing_compiler_wrapper": SingleFile("cc.sh"),
         "mqsend": SingleFile("mqsend.c"),
-        "clustcc_compiler_wrapper": SingleFile("cc.sh"),
         "clustcc_client": SingleFile("client.c"),
+        "tracecc_client": SingleFile("client.c"),
         "py_epic_ipc": Archive(["src"], "epic_ipc.tar.gz"),
         "simple_c_package": SingleFile("simple.c")
     }
