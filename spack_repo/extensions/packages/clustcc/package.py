@@ -13,7 +13,7 @@ class Clustcc(PythonPackage):
     maintainers("JohnGouwar")
     git = "https://github.com/JohnGouwar/clustcc.git"
 
-    version("main")
+    version("main", branch="main")
 
     depends_on("py-setuptools", type=("build"))
     depends_on("py-mpi4py", type=("build", "run"))

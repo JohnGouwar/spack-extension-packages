@@ -25,6 +25,7 @@ class ClustccGcc(Package, CompilerPackage):
     
     provides("c", "cxx")
     depends_on("clustcc-client")
+    depends_on("gcc")
     # TODO: External GCC can have versions that are not defined by the package
     # Example: Fedora 41 has gcc@14.3.1, but this is not in the GCC package
     for ver, args in Gcc.versions.items():
