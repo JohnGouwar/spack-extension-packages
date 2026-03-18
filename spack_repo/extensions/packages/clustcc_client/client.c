@@ -133,6 +133,27 @@ int send_task_msg(
   return 0;
 }
 
+/**
+   Determines whether the command can just be immediately forked if there is
+   no point in sending it to the server. This is best effort to increase throughput
+ */
+bool can_short_circuit(int cmdlen, char** cmdarr) {
+  for (int i = 0; i < cmdlen; i++){
+    char* arg = cmdarr[i];
+    if (strcmp(arg, "-E") == 0) { // just the preprocessor
+      return true;
+    } else if (strcmp(arg, "-") == 0) { // called with stdin
+      return true;
+    } else if (strcmp(arg, "conftest.c") == 0) { // likely smoke-test from gmake
+      return true;
+    } else if (strcmp(arg, "-v") == 0) { // version check
+      return true;
+    }
+  }
+  // We haven't found a reason to early return (i.e. clear server is not needed)
+  return false;
+}
+
 int main(int argc, char** argv) {
   char fifopath[32];
   char cwd[PATH_MAX];
@@ -142,6 +163,9 @@ int main(int argc, char** argv) {
   }
   int cmdlen = argc - 1;
   char** cmdarr = argv + 1;
+  if (can_short_circuit(cmdlen, cmdarr)) {
+    execv(cmdarr[0], cmdarr);
+  }
   // Setup return fifo
   if (make_unique_fifo(cmdlen, cmdarr, fifopath) < 0){
     perror("Error making return fifo");

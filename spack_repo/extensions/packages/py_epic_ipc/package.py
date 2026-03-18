@@ -11,7 +11,7 @@ class PyEpicIpc(PythonPackage):
     url = f"file:///{pathlib.PurePath(__file__).parent}/epic_ipc.tar.gz"
     version(
         "1.0",
-        sha256="c84ffd47934f2067f91adc739b7d45404b4c0d5cba1794a58974e61aff87be93",
+        sha256="f87635e379ea8ef84857125ed231346ff4031f8858996a3dc69151f66323fd79",
     )
     depends_on("py-setuptools", type="build")
     depends_on("c", type="build")

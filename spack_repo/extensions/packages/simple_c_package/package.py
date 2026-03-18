@@ -18,7 +18,7 @@ class SimpleCPackage(Package):
         expand=False
     )
 
-    depends_on("c")
+    depends_on("c", type="build")
 
     def install(self, spec, prefix):
         src = pathlib.Path(self.stage.source_path) / "simple.c"
