@@ -144,9 +144,12 @@ bool can_short_circuit(int cmdlen, char** cmdarr) {
       return true;
     } else if (strcmp(arg, "-") == 0) { // called with stdin
       return true;
-    } else if (strcmp(arg, "conftest.c") == 0) { // likely smoke-test from gmake
+    } else if (strcmp(arg, "conftest.c") == 0) { // likely smoke-test  
       return true;
-    } else if (strcmp(arg, "-v") == 0) { // version check
+    } else if (strcmp(arg, "conftest.cc") == 0) { // likely smoke-test
+      return true;
+    }
+    else if (strcmp(arg, "-v") == 0) { // version check
       return true;
     }
   }

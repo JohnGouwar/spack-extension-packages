@@ -18,7 +18,7 @@ class ClustccClient(Package):
 
     version(
         "1.0",
-        sha256="8d23547b2620ead63b982174bc05c88ef567af9be0599c947acff47ca0d8c2d2",
+        sha256="b6db96ffefb1c6b82a9362939a9fa3e3975142c981ba4712b1665d339b858da1",
         expand=False
     )
     depends_on("c", type="build")
